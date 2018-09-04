@@ -91,84 +91,24 @@ class App extends Component {
       filterString: ''
     }
   }
-  //Get data function that is called when a user inputs a value they want to search for
-  getData = async (e) => {
-    //Prevents the page from being reloaded on the submit button
-    e.preventDefault();
-    //Get token data
-    let parsed = queryString.parse(window.location.search);
-    let accessToken = parsed.access_token;
-    if (!accessToken)
-      return;
-    //Getting the value of the search term
-    let searchTerm = e.target.elements.searchTerm.value;
-    searchTerm = searchTerm.replace(' ', '%20');
-    //Call fetch with new search t
-    fetch(`https://api.spotify.com/v1/search?q=%22${searchTerm}%22&type=playlist&market=US&limit=50`, {
-      headers: { 'Authorization': 'Bearer ' + accessToken }
-    }).then(response => response.json())
-      .then(playlistData => {
-        let playlists = playlistData.playlists.items
-        for (let i = 0; i < playlists.length; i++) {
-          let name = playlists[i].name;
-          let URI = playlists[i].href;
-          let img = playlists[i].images[0].url
-          let obj = { name, URI, img}
-          playlistsURIs.push(obj)
-        }
-        fetch(`https://api.spotify.com/v1/search?q=%22${searchTerm}%22&type=playlist&offset=50&limit=50`, {
-          headers: { 'Authorization': 'Bearer ' + accessToken }
-        }).then(response => response.json())
-          .then(playlistData => {
-            let playlists = playlistData.playlists.items
-            for (let i = 0; i < playlists.length; i++) {
-              let name = playlists[i].name;
-              let URI = playlists[i].href;
-              let img = playlists[i].images[0].url
-              let obj = { name, URI, img}
-              playlistsURIs.push(obj)
-            }
-            console.log(playlistsURIs)
-            let trackDataPromises = playlists.map(playlist => {
-              let responsePromise = fetch(playlist.tracks.href, {
-                headers: { 'Authorization': 'Bearer ' + accessToken }
-              })
-              let trackDataPromise = responsePromise
-                .then(response => response.json())
-              return trackDataPromise
-            })
-            let allTracksDataPromises =
-              Promise.all(trackDataPromises)
-            let playlistsPromise = allTracksDataPromises.then(trackDatas => {
-              trackDatas.forEach((trackData, i) => {
-                playlists[i].trackDatas = trackData.items
-                  .map(item => item.track)
-                  .map(trackData => ({
-                    name: trackData.name,
-                    duration: trackData.duration_ms / 1000
-                  }))
-              })
-              return playlists
-            })
-            return playlistsPromise
-          })
-          .then(playlists => this.setState({
-            playlists: playlists.map(item => {
-              return {
-                name: item.name,
-                imageUrl: item.images[0].url,
-                songs: item.trackDatas.slice(0, 3)
-              }
-            })
-          }))
-      })
-  }
   componentDidMount() {
     let parsed = queryString.parse(window.location.search);
     let accessToken = parsed.access_token;
     if (!accessToken)
       return;
     fetch('https://api.spotify.com/v1/me', {
+      headers: { 'Authorization': 'Bearer ' + accessToken }
+    }).then(response => response.json())
+      .then(data => this.setState({
+        user: {
+          name: data.display_name,
+          userURL: data.external_urls.spotify,
+          numFollowers: data.followers.total,
+          imgURL: data.images[0].url,
+          plan: data.product
+        }
+      }))
+    fetch('https://api.spotify.com/v1/me/top/tracks?limit=100', {
       headers: { 'Authorization': 'Bearer ' + accessToken }
     }).then(response => response.json())
       .then(data => this.setState({
