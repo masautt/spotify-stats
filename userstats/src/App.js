@@ -3,8 +3,6 @@ import './App.css';
 import queryString from 'query-string';
 import Filter from "./components/Filter"
 
-let playlistsURIs = []
-
 let defaultStyle = {
   color: '#fff',
   'font-family': 'Sawarabi Gothic, sans-serif'
@@ -12,31 +10,31 @@ let defaultStyle = {
 let counterStyle = {
   ...defaultStyle,
   width: "50%",
-  display: 'inline-block',
-  'margin-top': '40px',
-  'margin-bottom': '20px',
-  'font-size': '20px',
-  'line-height': '30px',
-  'text-align': 'center'
+  display: 'inlineBlock',
+  'marginTop': '40px',
+  'marginBottom': '20px',
+  'fontSize': '20px',
+  'lineHeight': '30px',
+  'textAlign': 'center'
 }
 let hStyle = {
   ...defaultStyle,
-  'text-align': 'center',
-  'margin-top': '5px'
+  'textAlign': 'center',
+  'marginTop': '5px'
 }
 let imgStyle = {
   'display': 'block',
   'margin-left': 'auto',
   'margin-right': 'auto',
   'width': '50%',
-  'margin-top': '20px',
+  'marginTop': '20px',
   'border-radius': '20px'
 }
 let divStyle = {
   'background': '#242B2E',
-  'margin-top': '20px',
+  'marginTop': '20px',
   'border-radius': '20px',
-  'display': 'inline-block',
+  'display': 'inlineBlock',
   'margin': '20px'
 }
 let smallDivStyle = {
@@ -65,7 +63,7 @@ let playListListStyle = {
   'border-radius': '20px',
 }
 let playListStyle = {
-  'display': 'inline-block',
+  'display': 'inlineBlock',
   'width': '130px',
   'height': '130px',
   'border-color': 'white',
@@ -76,9 +74,10 @@ let playListStyle = {
   'background-color': '#116466',
   'border-radius': '5px',
   'margin': '5px',
-
 }
 
+let tracksToRender = []
+let next
 function isEven(number) {
   return number % 2
 }
@@ -108,31 +107,25 @@ class App extends Component {
           plan: data.product
         }
       }))
-    fetch('https://api.spotify.com/v1/me/top/tracks?limit=100', {
+    fetch('https://api.spotify.com/v1/me/top/tracks?limit=50', {
       headers: { 'Authorization': 'Bearer ' + accessToken }
-    }).then(response => response.json())
-      .then(data => this.setState({
-        user: {
-          name: data.display_name,
-          userURL: data.external_urls.spotify,
-          numFollowers: data.followers.total,
-          imgURL: data.images[0].url,
-          plan: data.product
+    }).then(response => response.json()).then(data => {
+      for (let i = 0; i < data.items.length; i++) {
+        let track = {
+          "name": data.items[i].name,
+          "album": data.items[i].album.name,
+          "artist": data.items[i].artists[0].name,
+          "id": data.items[i].id,
+          "img" : data.items[i].album.images[0].url
         }
-      }))
+        tracksToRender.push(track)
+      }
+      console.log(tracksToRender)
+    }
+  )
   }
 
   render() {
-    let playlistToRender =
-      this.state.user &&
-        this.state.playlists
-        ? this.state.playlists.filter(playlist => {
-          let matchesPlaylist = playlist.name.toLowerCase().includes(
-            this.state.filterString.toLowerCase())
-          let matchesSong = playlist.songs.find(song => song.name.toLowerCase()
-            .includes(this.state.filterString.toLowerCase()))
-          return matchesPlaylist || matchesSong
-        }) : []
     return (
       <div>
         {this.state.user ?
@@ -154,8 +147,8 @@ class App extends Component {
             <div className="data" style={{ ...divStyle, ...largeDivStyle }}>
               {/*<PlaylistCounter playlists={playlistToRender} /><HoursCounter playlists={playlistToRender} />*/}
               <h1 style={hStyle}>Playlists</h1>
-              <div style={{ ...playListListStyle, 'margin-top': '-25px' }}>
-                {playlistToRender.map((playlist, i) => <Playlist playlist={playlist} index={i} />)}
+              <div style={{ ...playListListStyle, 'marginTop': '-25px' }}>
+                {tracksToRender.map((track, i) => <Playlist playlist={tracksToRender[i].track} index={i} />)}
               </div>
             </div>
           </div> : <button onClick={() => {
@@ -164,7 +157,7 @@ class App extends Component {
               : 'https://better-playlists-backend.herokuapp.com/login'
           }
           }
-            style={{ padding: '20px', 'font-size': '50px', 'margin': 'auto', 'background': '#116466' }}>Sign in with Spotify</button>
+            style={{ padding: '20px', 'fontSize': '50px', 'margin': 'auto', 'background': '#116466' }}>Sign in with Spotify</button>
         }
       </div>
     );
@@ -177,10 +170,10 @@ class Playlist extends Component {
       <div style={{ ...defaultStyle, ...hStyle, ...playListStyle, /*'background-color': isEven(this.props.index) ? '#116466' : '#EB6E18' */ }}>
         <img src={playlist.imageUrl} style={albumStyle} />
         <h2 style={{
-          'text-align': 'center',
-          'font-size': '10px'
+          'textAlign': 'center',
+          'fontSize': '10px'
         }}>{playlist.name}</h2>
-        {/* <ul style={{ 'margin-top': '10px', 'font-size': '5px' }}>
+        {/* <ul style={{ 'marginTop': '10px', 'fontSize': '5px' }}>
           {playlist.songs.map(song =>
             <li style={{ 'padding-top': '2px' }}>{song.name}</li>
           )}

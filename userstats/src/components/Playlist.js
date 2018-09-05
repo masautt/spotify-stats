@@ -2,14 +2,13 @@ import React from "react";
 
 class Playlist extends React {
     render() {
-      let playlist = this.props.playlist
       return (
         <div style={{...defaultStyle, ...hStyle, ...playListStyle, /*'background-color': isEven(this.props.index) ? '#116466' : '#EB6E18' */}}>
-          <img src={playlist.imageUrl} style={albumStyle} />
+          <img src={track[i].img} style={albumStyle} />
           <h2 style={{
             'text-align': 'center',
             'font-size': '10px'
-          }}>{playlist.name}</h2>
+          }}>{track[i].name}</h2>
           {/* <ul style={{ 'margin-top': '10px', 'font-size': '5px' }}>
             {playlist.songs.map(song =>
               <li style={{ 'padding-top': '2px' }}>{song.name}</li>
