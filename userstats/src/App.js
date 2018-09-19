@@ -34,19 +34,10 @@ let divStyle = {
   'background': '#242B2E',
   'marginTop': '20px',
   'border-radius': '20px',
-  'display': 'inlineBlock',
-  'margin': '20px'
-}
-let smallDivStyle = {
-  float: 'left',
-  width: '300px',
-  height: '400px',
-}
-let largeDivStyle = {
-  'width': '850px',
-  'height': '850px',
+  'display': 'inlineBlock'
 }
 let albumStyle = {
+  'float' : 'left',
   'display': 'block',
   'margin-left': 'auto',
   'margin-right': 'auto',
@@ -56,28 +47,30 @@ let albumStyle = {
 let playListListStyle = {
   'margin': 'auto',
   'height': '100%',
-  'width': '95%',
-  'height': '800px',
+  'width': '300px',
+  'height': '365px',
   'overflow': 'hidden',
   'overflow-y': 'scroll',
   'border-radius': '20px',
+
 }
 let playListStyle = {
   'display': 'inlineBlock',
-  'width': '130px',
-  'height': '130px',
-  'border-color': 'white',
-  'border-weight': '10px',
-  'border-style': 'solid',
+  'width': '300px',
+  'height': '100px',
+  'borderColor': 'white',
+  'borderWeight': '10px',
+  'borderStyle': 'solid',
   'padding': '5px',
   'overflow-y': 'hidden',
-  'background-color': '#116466',
+  'backgroundColor': '#116466',
   'border-radius': '5px',
   'margin': '5px',
+  'padding-right' : '20px'
 }
 
 let tracksToRender = []
-let next
+let artistsToRender = []
 function isEven(number) {
   return number % 2
 }
@@ -120,17 +113,33 @@ class App extends Component {
         }
         tracksToRender.push(track)
       }
-      console.log(tracksToRender)
+      return tracksToRender
     }
-  )
+  ).then(data => this.setState({ tracks: data}))
+  fetch('https://api.spotify.com/v1/me/top/artists?limit=50', {
+      headers: { 'Authorization': 'Bearer ' + accessToken }
+    }).then(response => response.json()).then(data => {
+      for (let i = 0; i < data.items.length; i++) {
+        let artist = {
+          "name": data.items[i].name,
+          "img": data.items[i].images[0].url,
+          "followers" : data.items[i].followers.total
+        }
+        artistsToRender.push(artist)
+      }
+      return artistsToRender
+    }
+  ).then(data => this.setState({ artists: data}))
   }
 
   render() {
+    let theseTracksToRender = this.state.tracks
+    let theseArtistsToRender = this.state.artists
     return (
       <div>
         {this.state.user ?
           <div>
-            <div className="userInfo" style={{ float: 'left', width: '300px', height: '400px', ...divStyle }}>
+            <div className="userInfo" style={{ float: 'left', width: '300px', height: '365px', ...divStyle}}>
               <h3 style={hStyle}>Welcome {this.state.user.name} </h3>
               <img src={this.state.user.imgURL} style={imgStyle}></img>
               <h3 style={hStyle}>Followers:  {this.state.user.numFollowers} </h3>
@@ -139,16 +148,16 @@ class App extends Component {
               <Filter getData={this.getData} />
             </div>
 
-            <div className="currentPlaylist" style={{ ...divStyle, ...smallDivStyle }}>
-              <h3 style={hStyle}>Current Playlist</h3>
-
+            <div className="playlists" style={{...divStyle, "position": "absolute", "left": "340px", "width": "300px"}}>
+              <h1 style={hStyle}></h1>
+              <div style={{ ...playListListStyle}}>
+                {tracksToRender.map((track, i) => <Track playlist={tracksToRender[i]} index={i} />)}
+              </div>
             </div>
-
-            <div className="data" style={{ ...divStyle, ...largeDivStyle }}>
-              {/*<PlaylistCounter playlists={playlistToRender} /><HoursCounter playlists={playlistToRender} />*/}
-              <h1 style={hStyle}>Playlists</h1>
-              <div style={{ ...playListListStyle, 'marginTop': '-25px' }}>
-                {tracksToRender.map((track, i) => <Playlist playlist={tracksToRender[i].track} index={i} />)}
+            <div className="artists" style={{...divStyle, "position": "absolute", "left": "725px", "width": "300px"}}>
+              <h1 style={hStyle}></h1>
+              <div style={{ ...playListListStyle}}>
+                {artistsToRender.map((track, i) => <Track playlist={artistsToRender[i]} index={i} />)}
               </div>
             </div>
           </div> : <button onClick={() => {
@@ -163,56 +172,30 @@ class App extends Component {
     );
   }
 }
-class Playlist extends Component {
+class Track extends Component {
   render() {
-    let playlist = this.props.playlist
+    let track = this.props.playlist
+    let index = this.props.index
     return (
-      <div style={{ ...defaultStyle, ...hStyle, ...playListStyle, /*'background-color': isEven(this.props.index) ? '#116466' : '#EB6E18' */ }}>
-        <img src={playlist.imageUrl} style={albumStyle} />
-        <h2 style={{
-          'textAlign': 'center',
-          'fontSize': '10px'
-        }}>{playlist.name}</h2>
-        {/* <ul style={{ 'marginTop': '10px', 'fontSize': '5px' }}>
-          {playlist.songs.map(song =>
-            <li style={{ 'padding-top': '2px' }}>{song.name}</li>
-          )}
-        </ul> */}
+      <div style={{ ...defaultStyle, ...hStyle, ...playListStyle}}>
+        <img src={track.img} style={albumStyle} />
+        <h2 style={{'fontSize' : '20px', "margin" : "5px"}}>{index+1}</h2>
+        <h2 style={{'textAlign': 'center', 'fontSize': '15px'}}>{track.name}</h2>
+        <h2 style={{'textAlign': 'center', 'fontSize': '10px'}}>{track.artist}</h2>
       </div>
     );
   }
 }
-
-
-class PlaylistCounter extends Component {
+class Artist extends Component {
   render() {
-    let playlistCounterStyle = counterStyle
+    let track = this.props.artist
+    let index = this.props.index
     return (
-      <div style={playlistCounterStyle}>
-        <h2>{this.props.playlists.length} playlists</h2>
-      </div>
-    );
-  }
-}
-
-class HoursCounter extends Component {
-  render() {
-    let allSongs = this.props.playlists.reduce((songs, eachPlaylist) => {
-      return songs.concat(eachPlaylist.songs)
-    }, [])
-    let totalDuration = allSongs.reduce((sum, eachSong) => {
-      return sum + eachSong.duration
-    }, 0)
-    let totalDurationHours = Math.round(totalDuration / 60)
-    let isTooLow = totalDurationHours < 40
-    let hoursCounterStyle = {
-      ...counterStyle,
-      color: isTooLow ? 'red' : 'white',
-      'font-weight': isTooLow ? 'bold' : 'normal',
-    }
-    return (
-      <div style={hoursCounterStyle}>
-        <h2>{totalDurationHours} hours</h2>
+      <div style={{ ...defaultStyle, ...hStyle, ...playListStyle}}>
+        <img src={track.img} style={albumStyle} />
+        <h2 style={{'fontSize' : '20px', "margin" : "5px"}}>{index+1}</h2>
+        <h2 style={{'textAlign': 'center', 'fontSize': '15px'}}>{track.name}</h2>
+        <h2 style={{'textAlign': 'center', 'fontSize': '10px'}}>{track.artist}</h2>
       </div>
     );
   }
