@@ -1,22 +1,11 @@
 import React, { Component } from 'react';
 import './App.css';
 import queryString from 'query-string';
-import Filter from "./components/Filter"
 
 let defaultStyle = {
   color: '#fff',
   'font-family': 'Sawarabi Gothic, sans-serif'
 };
-let counterStyle = {
-  ...defaultStyle,
-  width: "50%",
-  display: 'inlineBlock',
-  'marginTop': '40px',
-  'marginBottom': '20px',
-  'fontSize': '20px',
-  'lineHeight': '30px',
-  'textAlign': 'center'
-}
 let hStyle = {
   ...defaultStyle,
   'textAlign': 'center',
@@ -33,40 +22,30 @@ let imgStyle = {
 let divStyle = {
   'background': '#242B2E',
   'marginTop': '20px',
-  'border-radius': '20px',
-  'display': 'inlineBlock'
+  'border-radius': '20px'
 }
 let albumStyle = {
   'float' : 'left',
   'display': 'block',
-  'margin-left': 'auto',
-  'margin-right': 'auto',
   'width': '100px',
   'height': '100px'
 }
 let playListListStyle = {
   'margin': 'auto',
-  'height': '100%',
-  'width': '300px',
-  'height': '365px',
+  'height': '700px',
+  'width' : '85%',
   'overflow': 'hidden',
-  'overflow-y': 'scroll',
-  'border-radius': '20px',
-
+  'overflow-y': 'scroll'
 }
 let playListStyle = {
-  'display': 'inlineBlock',
-  'width': '300px',
+  "margin" : "auto",
+  "width" : "90%",
   'height': '100px',
   'borderColor': 'white',
   'borderWeight': '10px',
   'borderStyle': 'solid',
-  'padding': '5px',
-  'overflow-y': 'hidden',
-  'backgroundColor': '#116466',
+  'backgroundColor': '#67ADF3',
   'border-radius': '5px',
-  'margin': '5px',
-  'padding-right' : '20px'
 }
 
 let tracksToRender = []
@@ -139,27 +118,31 @@ class App extends Component {
       <div>
         {this.state.user ?
           <div>
-            <div className="userInfo" style={{ float: 'left', width: '300px', height: '365px', ...divStyle}}>
+            <div className="userInfo" style={{divStyle}}>
               <h3 style={hStyle}>Welcome {this.state.user.name} </h3>
               <img src={this.state.user.imgURL} style={imgStyle}></img>
               <h3 style={hStyle}>Followers:  {this.state.user.numFollowers} </h3>
               <h3 style={hStyle}> Plan: {this.state.user.plan.charAt(0).toUpperCase() + this.state.user.plan.substr(1)}</h3>
-              <br></br>
-              <Filter getData={this.getData} />
             </div>
-
-            <div className="playlists" style={{...divStyle, "position": "absolute", "left": "340px", "width": "300px"}}>
-              <h1 style={hStyle}></h1>
+            <br></br>
+            <div className="playlists" style={{divStyle}}>
+              <h1 style={hStyle}>Top Tracks</h1>
               <div style={{ ...playListListStyle}}>
                 {tracksToRender.map((track, i) => <Track playlist={tracksToRender[i]} index={i} />)}
               </div>
             </div>
-            <div className="artists" style={{...divStyle, "position": "absolute", "left": "725px", "width": "300px"}}>
-              <h1 style={hStyle}></h1>
+            <br></br>
+            <br></br>
+            <div className="artists" style={{divStyle}}>
+              <h1 style={hStyle}>Top Artists</h1>
               <div style={{ ...playListListStyle}}>
                 {artistsToRender.map((track, i) => <Track playlist={artistsToRender[i]} index={i} />)}
               </div>
             </div>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
           </div> : <button onClick={() => {
             window.location = window.location.href.includes('localhost')
               ? 'http://localhost:8888/login'
