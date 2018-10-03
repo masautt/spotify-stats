@@ -122,13 +122,15 @@ class App extends Component {
               <h3 style={hStyle}>Welcome {this.state.user.name} </h3>
               <img src={this.state.user.imgURL} style={imgStyle}></img>
               <h3 style={hStyle}>Followers:  {this.state.user.numFollowers} </h3>
-              <h3 style={hStyle}> Plan: {this.state.user.plan.charAt(0).toUpperCase() + this.state.user.plan.substr(1)}</h3>
+              <h3 style={hStyle}> Plan: {this.state.user.plan.charAt(0).toUpperCase() 
+                + this.state.user.plan.substr(1)}</h3>
             </div>
             <br></br>
-            <div className="playlists" style={{divStyle}}>
+            <div className="tracks" style={{divStyle}}>
               <h1 style={hStyle}>Top Tracks</h1>
               <div style={{ ...playListListStyle}}>
-                {tracksToRender.map((track, i) => <Track playlist={tracksToRender[i]} index={i} />)}
+                {tracksToRender.map((track, i) => 
+                <Track playlist={tracksToRender[i]} index={i} />)}
               </div>
             </div>
             <br></br>

@@ -23,25 +23,10 @@
           "images": [
             {
               "height": 640,
-              "url": "https://i.scdn.co/image/71036d8a018345a7219e391ef26e4a27070208c0",
+              "url": "https://imgur.com/yed5Zfk",
               "width": 640
-            },
-            {
-              "height": 300,
-              "url": "https://i.scdn.co/image/eda379ccffeb204feb4663bd11f2bcaff1d209b3",
-              "width": 300
-            },
-            {
-              "height": 64,
-              "url": "https://i.scdn.co/image/121ec82eb8c0dcba48d2ed3514376d01dd246766",
-              "width": 64
             }
-          ],
-          "name": "Fresh Air",
-          "release_date": "2017-02-03",
-          "release_date_precision": "day",
-          "type": "album",
-          "uri": "spotify:album:6hXa2OPdIt6xwGpaRpvDFz"
+          ]
         },
         "artists": [
           {
@@ -70,7 +55,6 @@
         "is_playable": true,
         "name": "Every Single Thing",
         "popularity": 59,
-        "preview_url": "https://p.scdn.co/mp3-preview/7588a43282617005f0b9b658ce0f1b9c30eb7b9e?cid=null",
         "track_number": 4,
         "type": "track",
         "uri": "spotify:track:7yZTPEXSUqWw7sEYKKDv2N"
